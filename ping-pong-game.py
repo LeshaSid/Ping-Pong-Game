@@ -16,11 +16,17 @@ class GameSprite(sprite.Sprite):
         window.blit(self.image, (self.rect.x, self.rect.y))
 
 class Player(GameSprite):
+    def update_r(self):
+        keys = key.get_pressed()
+        if keys[K_UP] and self.rect.y > 5:
+            self.rect.y -= self.speed
+        if keys[K_DOWN] and self.rect.y < win_height - 100:
+            self.rect.y += self.speed
     def update_l(self):
         keys = key.get_pressed()
-        if keys[K_UP] and self.rect.x > 5:
+        if keys[K_w] and self.rect.y > 5:
             self.rect.y -= self.speed
-        if keys[K_DOWN] and self.rect.x < win_width - 80:
+        if keys[K_s] and self.rect.y < win_height - 100:
             self.rect.y += self.speed
 #окно игры
 back = (85, 255, 113)
@@ -31,7 +37,8 @@ window.fill(back)
 #переменные
 img_rack_l = "rect.png"
 #спрайты
-rack_l = Player(img_rack_l, 100, 100, 100, 75, 10)
+rack_l = Player(img_rack_l, 100, 100, 30, 110, 10)
+rack_r = Player(img_rack_l, win_width - 100, 100, 30, 110, 10)
 #FPS и обновление
 clock = time.Clock()
 FPS = 60
@@ -41,7 +48,11 @@ while game:
     for e in event.get():
         if e.type == QUIT:
             game = False
+
+    window.fill(back)
+    rack_l.update_l()        
     rack_l.reset()
-    rack_l.update_l()
+    rack_r.update_r()        
+    rack_r.reset()
     display.update()
     clock.tick(FPS)
