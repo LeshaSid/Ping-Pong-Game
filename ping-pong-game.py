@@ -35,24 +35,54 @@ win_height = 720
 window = display.set_mode((win_width, win_height))
 window.fill(back)
 #переменные
+img_ball = "ball.png"
 img_rack_l = "rect.png"
+speed_x = 3
+speed_y = 3
 #спрайты
 rack_l = Player(img_rack_l, 100, 100, 30, 110, 10)
 rack_r = Player(img_rack_l, win_width - 100, 100, 30, 110, 10)
+ball = GameSprite(img_ball, 400, 400, 48, 48, 5)
+#текст проигрыша и выйгрыша
+font.init()
+font = font.Font(None, 70)
+lose_l = font.render('PLAYER LEFT LOSE!', True, (180, 0, 0))
+lose_r = font.render('PLAYER RIGHT LOSE!', True, (180, 0, 0))
 #FPS и обновление
 clock = time.Clock()
 FPS = 60
+#игровой цикл
 game = True
+finish = False
 
 while game:
     for e in event.get():
         if e.type == QUIT:
             game = False
+    if finish != True:
+        window.fill(back)
+        rack_l.update_l()
+        rack_r.update_r() 
+        ball.rect.x += speed_x
+        ball.rect.y += speed_y
 
-    window.fill(back)
-    rack_l.update_l()        
-    rack_l.reset()
-    rack_r.update_r()        
-    rack_r.reset()
+        if sprite.collide_rect(rack_l, ball) or sprite.collide_rect(rack_r, ball):
+            speed_x *= -1
+            speed_y *= -1
+
+        if ball.rect.y > win_height-50 or ball.rect.y < 0:
+            speed_y *= -1
+
+        if ball.rect.x < 0:
+            finish = True
+            window.blit(lose_l, (400, 360))
+
+        if ball.rect.x > win_width:
+            finish = True
+            window.blit(lose_r, (400, 360))
+
+        rack_l.reset()   
+        rack_r.reset()
+        ball.reset()
     display.update()
     clock.tick(FPS)
